@@ -1,25 +1,20 @@
-import zip from "jszip";
 import { PutObjectCommand, PutObjectCommandInputType } from "@aws-sdk/client-s3";
 import { s3Client } from "./s3Client";
+import JSZip from 'jszip';
 
-export const uploadFile = async (blob: Blob) => {
+export const uploadFile = async (blob: Blob, fileName: string) => {
   try {
-    // convert to Uint8Array
-    const arrayPromise = new Promise<ArrayBuffer>((resolve) => {
-      const reader = new FileReader()
-      reader.onloadend = () => {
-        resolve(reader.result as ArrayBuffer)
-      }
-      reader.readAsArrayBuffer(blob)
-    })
-    const arr = await arrayPromise as ArrayBuffer
-    const uint8arr = new Uint8Array(arr)
-    console.log(uint8arr)
+
+    const zip = new JSZip();
+    zip.file(fileName, blob)
+    const content = await zip.generateAsync({ type: 'blob' })
+
     const uploadParams = {
-      Bucket: '',
-      Key: '',
-      Body: uint8arr,
+      Bucket: 'sa2023-fileshare-storage',
+      Key: fileName + '.zip',
+      Body: content,
     } satisfies PutObjectCommandInputType
+
     const results = await s3Client.send(new PutObjectCommand(uploadParams));
     console.log(
       "Successfully created " +
@@ -31,6 +26,6 @@ export const uploadFile = async (blob: Blob) => {
     );
     return results; // For unit tests.
   } catch (err) {
-    console.log("Error", err);
+    console.error("Error", err);
   }
 }
