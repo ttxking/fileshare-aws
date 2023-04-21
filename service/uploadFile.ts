@@ -31,7 +31,7 @@ export const uploadFile = async (blob: Blob, fileName: string) => {
       "/" +
       uploadParams.Key
     );
-    return response; // For unit tests.
+    return response.data; // For unit tests.
   } catch (err) {
     console.error("Error", err);
     throw new Error()
