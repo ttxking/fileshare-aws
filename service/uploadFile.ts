@@ -34,5 +34,6 @@ export const uploadFile = async (blob: Blob, fileName: string) => {
     return response; // For unit tests.
   } catch (err) {
     console.error("Error", err);
+    throw new Error()
   }
 }

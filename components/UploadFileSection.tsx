@@ -29,7 +29,11 @@ export const UploadFileSection = () => {
   const onUpload = async (options: UploadRequestOption) => {
     const { onSuccess, onError, file } = options;
     try {
-      const result = await uploadFile(new Blob([file]), file.name);
+      if (typeof file === 'string') {
+        await uploadFile(new Blob([file]), file)
+      } else {
+        await uploadFile(new Blob([file]), file.name);
+      }
       onSuccess("Ok");
     } catch (err: any) {
       console.log("Eroor: ", err);

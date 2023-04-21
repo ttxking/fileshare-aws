@@ -1,4 +1,4 @@
-import { List, Result, Typography } from "antd";
+import { Button, List, Result, Typography } from "antd";
 import { useEffect, useState } from "react";
 import axios from "axios";
 
@@ -14,11 +14,10 @@ export const URLListSection = () => {
 
   useEffect(() => {
     const baseURL =
-      "https://e1cfkwgoec.execute-api.ap-southeast-1.amazonaws.com/default/files/";
+      "https://e1cfkwgoec.execute-api.ap-southeast-1.amazonaws.com/prod/files/110";
     const fetchUrlList = async () => {
       try {
         const response = await axios.get(baseURL);
-        setList(response.data);
       } catch (err: any) {
         console.error(err);
         setIsError(true);
