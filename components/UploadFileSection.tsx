@@ -1,4 +1,4 @@
-import { uploadFile } from "@/service/putObject";
+import { uploadFile } from "@/service/uploadFile";
 import { InboxOutlined } from "@ant-design/icons";
 import { UploadProps, App, Upload } from "antd";
 import type { UploadRequestOption } from "rc-upload/lib/interface";

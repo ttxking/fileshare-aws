@@ -14,7 +14,7 @@ export const URLListSection = () => {
 
   useEffect(() => {
     const baseURL =
-      "https://e1cfkwgoec.execute-api.ap-southeast-1.amazonaws.com/default/files/c9e2bc0c-a024-4177-b1a2-d3ea8bb7ef0f";
+      "https://e1cfkwgoec.execute-api.ap-southeast-1.amazonaws.com/default/files/";
     const fetchUrlList = async () => {
       try {
         const response = await axios.get(baseURL);
