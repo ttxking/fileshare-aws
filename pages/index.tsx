@@ -9,8 +9,8 @@ import {
 } from "antd";
 import { useState } from "react";
 
-import { UploadFileSection } from "@/components/UploadFileSection";
-import { URLListSection } from "@/components/URLListSection";
+import { UploadFileSection } from "../components/UploadFileSection";
+import { URLListSection } from "../components/URLListSection";
 import { Footer } from "../components/Footer"
 import Head from "next/head";
 
@@ -20,7 +20,7 @@ const { Content } = Layout;
 export default function Home() {
   const [isDarkMode, setIsDarkMode] = useState(false);
   const { defaultAlgorithm, darkAlgorithm } = theme;
-
+  
   const handleClick = () => {
     setIsDarkMode((previousValue) => !previousValue);
    };
