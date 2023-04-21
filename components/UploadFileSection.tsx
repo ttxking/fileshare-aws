@@ -1,37 +1,35 @@
 import { uploadFile } from "@/service/putObject";
 import { InboxOutlined } from "@ant-design/icons";
-import { UploadProps, message, Upload } from "antd";
+import { UploadProps, App, Upload } from "antd";
 import type { UploadRequestOption } from "rc-upload/lib/interface";
 
-const { Dragger } = Upload
-
-const props: UploadProps = {
-  name: "file",
-  async onChange(info) {
-    const { status } = info.file;
-    if (status !== "uploading") {
-      console.log(info.file, info.fileList);
-    }
-    if (status === "done") {
-      message.success(`${info.file.name} file uploaded successfully.`);
-    } else if (status === "error") {
-      message.error(`${info.file.name} file upload failed.`);
-    }
-  },
-  onDrop(e) {
-    console.log("Dropped files", e.dataTransfer.files);
-  },
-};
+const { Dragger } = Upload;
 
 export const UploadFileSection = () => {
+  const { message } = App.useApp()
+
+  const props: UploadProps = {
+    name: "file",
+    async onChange(info) {
+      const { status } = info.file;
+      if (status !== "uploading") {
+        console.log(info.file, info.fileList);
+      }
+      if (status === "done") {
+        message.success(`${info.file.name} file uploaded successfully.`);
+      } else if (status === "error") {
+        message.error(`${info.file.name} file upload failed.`);
+      }
+    },
+    onDrop(e) {
+      console.log("Dropped files", e.dataTransfer.files);
+    },
+  };
 
   const onUpload = async (options: UploadRequestOption) => {
     const { onSuccess, onError, file } = options;
     try {
-      const result = await uploadFile(
-        new Blob([options.file]),
-        options.file.name as string
-      );
+      const result = await uploadFile(new Blob([file]), file.name);
       onSuccess("Ok");
     } catch (err: any) {
       console.log("Eroor: ", err);
@@ -39,7 +37,7 @@ export const UploadFileSection = () => {
     }
   };
   return (
-    <Dragger style={{ padding: '2rem' }} customRequest={onUpload} {...props}>
+    <Dragger style={{ padding: "2rem" }} customRequest={onUpload} {...props}>
       <p className="ant-upload-drag-icon">
         <InboxOutlined />
       </p>
