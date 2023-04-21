@@ -1,124 +1,103 @@
-import Image from 'next/image'
-import { Inter } from 'next/font/google'
+import { InboxOutlined, UploadOutlined } from "@ant-design/icons";
+import { Space, UploadProps } from "antd";
+import {
+  message,
+  Layout,
+  Upload,
+  Typography,
+  Divider,
+  List,
+} from "antd";
+import { useEffect, useState } from "react";
+import { uploadFile } from "@/service/putObject";
+import zip from 'jszip'
 
-const inter = Inter({ subsets: ['latin'] })
+const { Dragger } = Upload;
+const { Title, Paragraph, Text } = Typography;
+const { Content, Footer } = Layout;
+
+const props: UploadProps = {
+  name: "file",
+  async customRequest(options){
+    // zip().file('file1', options.file);
+    // const content = await zip().generateAsync({ type: "blob" });
+    // const file = new File([content], options.filename || 'filename', {type: content.type, lastModified:new Date().getTime()})
+    uploadFile(new Blob([options.file]))
+  },
+  async onChange(info) {
+    const { status } = info.file;
+  
+    if (status !== "uploading") {
+      console.log(info.file, info.fileList);
+    }
+    if (status === "done") {
+      message.success(`${info.file.name} file uploaded successfully.`);
+    } else if (status === "error") {
+      message.error(`${info.file.name} file upload failed.`);
+    }
+  },
+  onDrop(e) {
+    console.log("Dropped files", e.dataTransfer.files);
+  },
+};
+
+interface DataType {
+  url: string;
+}
+
+const count = 3;
+const fakeDataUrl = `https://randomuser.me/api/?results=${count}&inc=name,gender,email,nat,picture&noinfo`;
 
 export default function Home() {
+  const [list, setList] = useState<DataType[]>([]);
+  const [data, setData] = useState<DataType[]>([]);
+
+  useEffect(() => {
+    fetch(fakeDataUrl)
+      .then((res) => res.json())
+      .then((res) => {
+        setData(res.results);
+        setList(res.results);
+      });
+  }, []);
+
   return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-24">
-      <div className="z-10 w-full max-w-5xl items-center justify-between font-mono text-sm lg:flex">
-        <p className="fixed left-0 top-0 flex w-full justify-center border-b border-gray-300 bg-gradient-to-b from-zinc-200 pb-6 pt-8 backdrop-blur-2xl dark:border-neutral-800 dark:bg-zinc-800/30 dark:from-inherit lg:static lg:w-auto  lg:rounded-xl lg:border lg:bg-gray-200 lg:p-4 lg:dark:bg-zinc-800/30">
-          Get started by editing&nbsp;
-          <code className="font-mono font-bold">pages/index.tsx</code>
-        </p>
-        <div className="fixed bottom-0 left-0 flex h-48 w-full items-end justify-center bg-gradient-to-t from-white via-white dark:from-black dark:via-black lg:static lg:h-auto lg:w-auto lg:bg-none">
-          <a
-            className="pointer-events-none flex place-items-center gap-2 p-8 lg:pointer-events-auto lg:p-0"
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            By{' '}
-            <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className="dark:invert"
-              width={100}
-              height={24}
-              priority
-            />
-          </a>
-        </div>
-      </div>
-
-      <div className="relative flex place-items-center before:absolute before:h-[300px] before:w-[480px] before:-translate-x-1/2 before:rounded-full before:bg-gradient-radial before:from-white before:to-transparent before:blur-2xl before:content-[''] after:absolute after:-z-20 after:h-[180px] after:w-[240px] after:translate-x-1/3 after:bg-gradient-conic after:from-sky-200 after:via-blue-200 after:blur-2xl after:content-[''] before:dark:bg-gradient-to-br before:dark:from-transparent before:dark:to-blue-700/10 after:dark:from-sky-900 after:dark:via-[#0141ff]/40 before:lg:h-[360px]">
-        <Image
-          className="relative dark:drop-shadow-[0_0_0.3rem_#ffffff70] dark:invert"
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
+    <Layout style={{ minHeight: "100vh" }}>
+      <Content style={{ padding: '24px 50px 0 50px', maxWidth: '1200px', margin: '0 auto'}}>
+        <Title level={1}>File Sharing</Title>
+        <Paragraph>Upload a file then share link to your friends.</Paragraph>
+        <Dragger {...props}>
+          <p className="ant-upload-drag-icon">
+            <InboxOutlined />
+          </p>
+          <p className="ant-upload-text">
+            Click or drag file to this area to upload
+          </p>
+          <p className="ant-upload-hint">
+            Support for a single upload. Strictly prohibited from
+            uploading company data or other banned files.
+          </p>
+        </Dragger>
+        <Divider />
+        <Title level={2}>Links</Title>
+        <List
+          dataSource={list}
+          itemLayout="horizontal"
+          renderItem={(item) => (
+            <List.Item>
+              <Text copyable type="secondary">
+                1231231{item.url}
+              </Text>
+            </List.Item>
+          )}
         />
-      </div>
-
-      <div className="mb-32 grid text-center lg:mb-0 lg:grid-cols-4 lg:text-left">
-        <a
-          href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`${inter.className} mb-3 text-2xl font-semibold`}>
-            Docs{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p
-            className={`${inter.className} m-0 max-w-[30ch] text-sm opacity-50`}
-          >
-            Find in-depth information about Next.js features and API.
-          </p>
-        </a>
-
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`${inter.className} mb-3 text-2xl font-semibold`}>
-            Learn{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p
-            className={`${inter.className} m-0 max-w-[30ch] text-sm opacity-50`}
-          >
-            Learn about Next.js in an interactive course with&nbsp;quizzes!
-          </p>
-        </a>
-
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`${inter.className} mb-3 text-2xl font-semibold`}>
-            Templates{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p
-            className={`${inter.className} m-0 max-w-[30ch] text-sm opacity-50`}
-          >
-            Discover and deploy boilerplate example Next.js&nbsp;projects.
-          </p>
-        </a>
-
-        <a
-          href="https://vercel.com/new?utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`${inter.className} mb-3 text-2xl font-semibold`}>
-            Deploy{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p
-            className={`${inter.className} m-0 max-w-[30ch] text-sm opacity-50`}
-          >
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
-          </p>
-        </a>
-      </div>
-    </main>
-  )
+      </Content>
+      <Footer>
+        <Space direction="horizontal" size="small" style={{ display: 'flex', justifyContent: 'space-between'}}>
+          <Text type="secondary">01219449 Principles of Software Architecture Course Group Project</Text>
+          <Text type="secondary">Software and Knowledge Engineering, Kasetsart University</Text>
+        </Space>
+      </Footer>
+    </Layout>
+  );
 }
