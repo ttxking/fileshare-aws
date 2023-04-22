@@ -7,4 +7,6 @@ type File = {
 
 const filesAtom = atomWithStorage('files', [] as File[])
 
-export { filesAtom }
+const themeAtom = atomWithStorage('theme', 'dark')
+
+export { filesAtom, themeAtom }

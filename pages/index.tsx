@@ -7,16 +7,18 @@ import { UploadFileSection } from '../components/UploadFileSection'
 import { URLListSection } from '../components/URLListSection'
 import { Footer } from '../components/Footer'
 import Head from 'next/head'
+import { useAtom } from 'jotai'
+import { themeAtom } from '@/atoms/files'
 
 const { Title, Paragraph } = Typography
 const { Content } = Layout
 
 export default function Home() {
-  const [isDarkMode, setIsDarkMode] = useState(false)
   const { defaultAlgorithm, darkAlgorithm } = theme
+  const [atom, setAtom] = useAtom(themeAtom)
 
   const handleClick = () => {
-    setIsDarkMode((previousValue) => !previousValue)
+    setAtom( atom === 'dark' ? 'light' : 'dark')
   }
 
   return (
@@ -26,7 +28,7 @@ export default function Home() {
       </Head>
       <ConfigProvider
         theme={{
-          algorithm: isDarkMode ? darkAlgorithm : defaultAlgorithm
+          algorithm: atom === 'dark' ? darkAlgorithm : defaultAlgorithm
         }}
       >
         <Layout style={{ minHeight: '100dvh', minWidth: '100dvw' }}>
@@ -34,6 +36,7 @@ export default function Home() {
             style={{
               padding: '24px 50px 0 50px',
               maxWidth: '1200px',
+              minWidth: '700px',
               margin: '0 auto'
             }}
           >
