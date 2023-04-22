@@ -1,5 +1,4 @@
 import JSZip from 'jszip'
-import axios from 'axios'
 import { axiosFileAPI } from './axios'
 
 export type UploadFileRequest = {
