@@ -10,13 +10,13 @@ import {
   App
 } from 'antd'
 import { useAtomValue, useSetAtom } from 'jotai'
-import { useCallback } from 'react'
+import { useCallback, useState } from 'react'
 import { UploadFileSection } from '../components/UploadFileSection'
 import { URLListSection } from '../components/URLListSection'
 import { Footer } from '../components/Footer'
 import Head from 'next/head'
 import { upload } from '@/service/upload'
-import { filesAtom, linksAtom } from '@/atoms/files'
+import { filesAtom, linksAtom, uploadFilesAtom } from '@/atoms/files'
 import { useAtom } from 'jotai'
 import { themeAtom } from '@/atoms/theme'
 
@@ -26,18 +26,22 @@ const { Content } = Layout
 export default function Home() {
   const { message } = App.useApp()
   const { defaultAlgorithm, darkAlgorithm } = appTheme
+  const [theme, setTheme] = useAtom(themeAtom)
   const files = useAtomValue(filesAtom)
   const setLinks = useSetAtom(linksAtom)
-  const [theme, setTheme] = useAtom(themeAtom)
+  const setUploadFiles = useSetAtom(uploadFilesAtom)
+  const [isUploading, setIsUploading] = useState(false)
 
   const handleClick = () => {
     setTheme(theme === 'dark' ? 'light' : 'dark')
   }
 
   const handleUpload = useCallback(async () => {
+    setIsUploading(true)
     try {
       const response = await upload(...files)
       setLinks((links) => [...links, response.fileId])
+      setUploadFiles([])
       message.success('Upload success')
     } catch (err) {
       if (err instanceof Error) {
@@ -46,8 +50,10 @@ export default function Home() {
         message.error('Unknown error')
       }
       console.error('Error: ', err)
+    } finally {
+      setIsUploading(false)
     }
-  }, [files, setLinks, message])
+  }, [files, message, setLinks, setUploadFiles])
 
   return (
     <>
@@ -75,9 +81,14 @@ export default function Home() {
                 style={{ color: '#1890ff', fontSize: '1.5rem' }}
               />
             </Space>
-            <Paragraph>
+            <Paragraph
+              style={{ display: 'flex', justifyContent: 'space-between' }}
+            >
               Upload a file then share link to your friends.
-              <Button onClick={handleUpload} disabled={files.length === 0}>
+              <Button
+                onClick={handleUpload}
+                disabled={files.length === 0 || isUploading}
+              >
                 Upload
               </Button>
             </Paragraph>
