@@ -73,7 +73,7 @@ export default function FileDetail() {
             />
           </Space>
           <Space direction="vertical">
-            <Button onClick={() => router.back()}>Back</Button>
+            <Button onClick={() => router.push('/')}>Back</Button>
             <Title level={2}>{detail?.file_name}</Title>
             {!isLoading ? (
               <>

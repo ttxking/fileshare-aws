@@ -1,11 +1,24 @@
 import { linksAtom } from '@/atoms/files'
+import { deleteLink } from '@/service/delete'
+import { DeleteOutlined } from '@ant-design/icons'
 import { List, Result, Typography } from 'antd'
-import { useAtomValue } from 'jotai'
+import { useAtom } from 'jotai'
 
 const { Title, Link } = Typography
 
 export const URLListSection = () => {
-  const links = useAtomValue(linksAtom)
+  const [links, setLinks] = useAtom(linksAtom)
+  
+  const onDeleteLink = async (fileId: string) => {
+    try {
+  
+      await deleteLink(fileId);
+     
+      setLinks((links) => links.filter(link => link !== fileId));
+    } catch (error) {
+      console.error(error)
+    }
+  }
 
   return (
     <>
@@ -28,6 +41,9 @@ export const URLListSection = () => {
               >
                 {item}
               </Link>
+              <DeleteOutlined
+                onClick={() => onDeleteLink(item)}
+              />
             </List.Item>
           )}
         />
