@@ -1,5 +1,6 @@
 import JSZip from 'jszip'
 import axios from 'axios'
+import { axiosFileAPI } from './axios'
 
 export type UploadFileRequest = {
   content: string
@@ -19,13 +20,10 @@ const upload = async (...files: File[]) => {
     zip.file(file.name, new Blob([file]))
   })
   const content = await zip.generateAsync({ type: 'base64' })
-  const response = await axios.post<UploadFileResponse>(
-    'https://e1cfkwgoec.execute-api.ap-southeast-1.amazonaws.com/prod/files',
-    {
-      name: fileName + '.zip',
-      content
-    }
-  )
+  const response = await axiosFileAPI.post<UploadFileResponse>('/', {
+    name: fileName + '.zip',
+    content
+  })
   return response.data
 }
 

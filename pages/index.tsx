@@ -6,30 +6,32 @@ import {
   Typography,
   Divider,
   ConfigProvider,
-  theme,
+  theme as appTheme,
   App
 } from 'antd'
 import { useAtomValue, useSetAtom } from 'jotai'
-import { useCallback, useState } from 'react'
+import { useCallback } from 'react'
 import { UploadFileSection } from '../components/UploadFileSection'
 import { URLListSection } from '../components/URLListSection'
 import { Footer } from '../components/Footer'
 import Head from 'next/head'
 import { upload } from '@/service/upload'
 import { filesAtom, linksAtom } from '@/atoms/files'
+import { useAtom } from 'jotai'
+import { themeAtom } from '@/atoms/theme'
 
 const { Title, Paragraph } = Typography
 const { Content } = Layout
 
 export default function Home() {
   const { message } = App.useApp()
-  const [isDarkMode, setIsDarkMode] = useState(false)
-  const { defaultAlgorithm, darkAlgorithm } = theme
+  const { defaultAlgorithm, darkAlgorithm } = appTheme
   const files = useAtomValue(filesAtom)
   const setLinks = useSetAtom(linksAtom)
+  const [theme, setTheme] = useAtom(themeAtom)
 
   const handleClick = () => {
-    setIsDarkMode((previousValue) => !previousValue)
+    setTheme(theme === 'dark' ? 'light' : 'dark')
   }
 
   const handleUpload = useCallback(async () => {
@@ -54,7 +56,7 @@ export default function Home() {
       </Head>
       <ConfigProvider
         theme={{
-          algorithm: isDarkMode ? darkAlgorithm : defaultAlgorithm
+          algorithm: theme === 'dark' ? darkAlgorithm : defaultAlgorithm
         }}
       >
         <Layout style={{ minHeight: '100dvh', minWidth: '100dvw' }}>
@@ -62,6 +64,7 @@ export default function Home() {
             style={{
               padding: '24px 50px 0 50px',
               maxWidth: '1200px',
+              minWidth: '700px',
               margin: '0 auto'
             }}
           >

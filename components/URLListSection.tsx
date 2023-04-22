@@ -2,7 +2,7 @@ import { linksAtom } from '@/atoms/files'
 import { List, Result, Typography } from 'antd'
 import { useAtomValue } from 'jotai'
 
-const { Text, Title, Link } = Typography
+const { Title, Link } = Typography
 
 export const URLListSection = () => {
   const links = useAtomValue(linksAtom)
