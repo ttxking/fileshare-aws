@@ -1,48 +1,55 @@
-import { uploadFile } from "@/service/uploadFile";
-import { InboxOutlined } from "@ant-design/icons";
-import { UploadProps, App, Upload } from "antd";
-import type { UploadRequestOption } from "rc-upload/lib/interface";
+import { useSetAtom } from 'jotai'
+import { filesAtom } from '@/atoms/files'
+import { UploadProps, App, Upload } from 'antd'
+import { InboxOutlined } from '@ant-design/icons'
+import { uploadFile } from '@/service/uploadFile'
+import type { UploadRequestOption } from 'rc-upload/lib/interface'
+import { useState } from 'react'
+import { RcFile } from 'antd/es/upload'
 
-const { Dragger } = Upload;
+const { Dragger } = Upload
 
 export const UploadFileSection = () => {
   const { message } = App.useApp()
+  const setFiles = useSetAtom(filesAtom)
+  const [uploadFiles, setUploadFiles] = useState<RcFile[]>([])
 
   const props: UploadProps = {
-    name: "file",
-    async onChange(info) {
-      const { status } = info.file;
-      if (status !== "uploading") {
-        console.log(info.file, info.fileList);
-      }
-      if (status === "done") {
-        message.success(`${info.file.name} file uploaded successfully.`);
-      } else if (status === "error") {
-        message.error(`${info.file.name} file upload failed.`);
-      }
+    name: 'file',
+    multiple: true,
+    beforeUpload: (_, fileList) => {
+      setUploadFiles(fileList)
     },
-    onDrop(e) {
-      console.log("Dropped files", e.dataTransfer.files);
-    },
-  };
+    fileList: uploadFiles
+  }
 
   const onUpload = async (options: UploadRequestOption) => {
-    const { onSuccess, onError, file } = options;
+    console.log(options)
+    const { onSuccess, onError, file } = options
     try {
-      let response
+      let fileName
       if (typeof file === 'string') {
-        response = await uploadFile(new Blob([file]), file)
+        fileName = file
       } else {
-        response = await uploadFile(new Blob([file]), file.name);
+        fileName = file.name
       }
-      // onSuccess(response);
-    } catch (err: any) {
-      console.log("Eroor: ", err);
-      // onError({ err });
+      const response = await uploadFile(new Blob([file]), fileName)
+      if (onSuccess !== undefined) {
+        onSuccess({ ...response, fileName })
+      }
+    } catch (err) {
+      if (err instanceof Error) {
+        if (onError !== undefined) {
+          onError(err)
+        }
+      } else {
+        console.error('Unknown error: ', err)
+      }
     }
-  };
+  }
+
   return (
-    <Dragger style={{ padding: "2rem" }} customRequest={onUpload} {...props}>
+    <Dragger style={{ padding: '2rem' }} customRequest={onUpload} {...props}>
       <p className="ant-upload-drag-icon">
         <InboxOutlined />
       </p>
@@ -54,5 +61,5 @@ export const UploadFileSection = () => {
         data or other banned files.
       </p>
     </Dragger>
-  );
-};
+  )
+}

@@ -1,8 +1,8 @@
-import { Space, Typography } from "antd";
+import { Space, Typography } from 'antd'
 import { Layout } from 'antd'
 
 const { Footer: AntdFooter } = Layout
-const { Text } = Typography;
+const { Text } = Typography
 
 export const Footer = () => {
   return (
@@ -10,7 +10,7 @@ export const Footer = () => {
       <Space
         direction="horizontal"
         size="small"
-        style={{ display: "flex", justifyContent: "space-between" }}
+        style={{ display: 'flex', justifyContent: 'space-between' }}
       >
         <Text type="secondary">
           01219449 Principles of Software Architecture Course Group Project
@@ -20,5 +20,5 @@ export const Footer = () => {
         </Text>
       </Space>
     </AntdFooter>
-  );
-};
+  )
+}
