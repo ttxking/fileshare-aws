@@ -1,5 +1,12 @@
 This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
+## Member
+
+1. Tatpol Samakpong 6210546668
+2. Krasin Dittaram 6210545416
+3. Chayapol Chaipongsawalee 6210545947
+4. Anusid Wachiracharoenwong 6210546714
+
 ## Getting Started
 
 First, run the development server:
