@@ -1,31 +1,33 @@
-import { filesAtom } from '@/atoms/files'
+import { linksAtom } from '@/atoms/files'
 import { List, Result, Typography } from 'antd'
 import { useAtomValue } from 'jotai'
 
-const { Text, Title } = Typography
+const { Text, Title, Link } = Typography
 
 export const URLListSection = () => {
-  const files = useAtomValue(filesAtom)
+  const links = useAtomValue(linksAtom)
 
   return (
     <>
       <Title level={2}>Links</Title>
-      {files.length === 0 ? (
+      {links.length === 0 ? (
         <Result title="Empty" subTitle="Try uploading files!" />
       ) : (
         <List
-          dataSource={files}
+          dataSource={links}
           itemLayout="horizontal"
           renderItem={(item) => (
             <List.Item>
-              <Text
+              <Link
+                href={`${window.location.origin}/files/${item}`}
+                target="_blank"
                 copyable={{
-                  text: `${window.location.origin}/files/${item.fileId}`
+                  text: `${window.location.origin}/files/${item}`
                 }}
                 type="secondary"
               >
-                {item.fileId}
-              </Text>
+                {item}
+              </Link>
             </List.Item>
           )}
         />

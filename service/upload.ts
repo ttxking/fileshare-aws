@@ -11,19 +11,22 @@ export type UploadFileResponse = {
   fileId: string
 }
 
-const uploadFile = async (blob: Blob, fileName: string) => {
+const upload = async (...files: File[]) => {
   const zip = new JSZip()
-  zip.file(fileName, blob)
+  const fileName = files.map((file) => file.name).join('+')
+  files.forEach((file) => {
+    console.log(new Blob([file], { type: file.type }))
+    zip.file(file.name, new Blob([file]))
+  })
   const content = await zip.generateAsync({ type: 'base64' })
-  const body = {
-    name: fileName + '.zip',
-    content
-  }
   const response = await axios.post<UploadFileResponse>(
     'https://e1cfkwgoec.execute-api.ap-southeast-1.amazonaws.com/prod/files',
-    body
+    {
+      name: fileName + '.zip',
+      content
+    }
   )
   return response.data
 }
 
-export { uploadFile }
+export { upload }
