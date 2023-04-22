@@ -1,48 +1,31 @@
-import { uploadFile } from "@/service/uploadFile";
-import { InboxOutlined } from "@ant-design/icons";
-import { UploadProps, App, Upload } from "antd";
-import type { UploadRequestOption } from "rc-upload/lib/interface";
+import { UploadProps, Upload } from 'antd'
+import { InboxOutlined } from '@ant-design/icons'
+import { useAtom } from 'jotai'
+import { uploadFilesAtom } from '@/atoms/files'
 
-const { Dragger } = Upload;
+const { Dragger } = Upload
 
 export const UploadFileSection = () => {
-  const { message } = App.useApp()
+  const [uploadFiles, setUploadFiles] = useAtom(uploadFilesAtom)
 
   const props: UploadProps = {
-    name: "file",
-    async onChange(info) {
-      const { status } = info.file;
-      if (status !== "uploading") {
-        console.log(info.file, info.fileList);
-      }
-      if (status === "done") {
-        message.success(`${info.file.name} file uploaded successfully.`);
-      } else if (status === "error") {
-        message.error(`${info.file.name} file upload failed.`);
-      }
+    name: 'file',
+    multiple: true,
+    onRemove: (file) => {
+      const index = uploadFiles.indexOf(file)
+      const newFileList = uploadFiles.slice()
+      newFileList.splice(index, 1)
+      setUploadFiles(newFileList)
     },
-    onDrop(e) {
-      console.log("Dropped files", e.dataTransfer.files);
+    beforeUpload: (_, fileList) => {
+      setUploadFiles(fileList)
+      return false
     },
-  };
+    fileList: uploadFiles
+  }
 
-  const onUpload = async (options: UploadRequestOption) => {
-    const { onSuccess, onError, file } = options;
-    try {
-      let response
-      if (typeof file === 'string') {
-        response = await uploadFile(new Blob([file]), file)
-      } else {
-        response = await uploadFile(new Blob([file]), file.name);
-      }
-      // onSuccess(response);
-    } catch (err: any) {
-      console.log("Eroor: ", err);
-      // onError({ err });
-    }
-  };
   return (
-    <Dragger style={{ padding: "2rem" }} customRequest={onUpload} {...props}>
+    <Dragger style={{ padding: '2rem' }} {...props}>
       <p className="ant-upload-drag-icon">
         <InboxOutlined />
       </p>
@@ -54,5 +37,5 @@ export const UploadFileSection = () => {
         data or other banned files.
       </p>
     </Dragger>
-  );
-};
+  )
+}

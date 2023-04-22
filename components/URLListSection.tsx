@@ -1,53 +1,37 @@
-import { Button, List, Result, Typography } from "antd";
-import { useEffect, useState } from "react";
-import axios from "axios";
+import { linksAtom } from '@/atoms/files'
+import { List, Result, Typography } from 'antd'
+import { useAtomValue } from 'jotai'
 
-const { Text, Title } = Typography;
-
-interface DataType {
-  url: string;
-}
+const { Title, Link } = Typography
 
 export const URLListSection = () => {
-  const [list, setList] = useState<DataType[]>([]);
-  const [isError, setIsError] = useState<boolean>(false);
-
-  useEffect(() => {
-    const baseURL =
-      "https://e1cfkwgoec.execute-api.ap-southeast-1.amazonaws.com/prod/files/110";
-    const fetchUrlList = async () => {
-      try {
-        const response = await axios.get(baseURL);
-      } catch (err: any) {
-        console.error(err);
-        setIsError(true);
-      }
-    };
-    fetchUrlList();
-  }, []);
+  const links = useAtomValue(linksAtom)
 
   return (
     <>
       <Title level={2}>Links</Title>
-      {isError ? (
-        <Result
-          status="500"
-          title="500"
-          subTitle="Sorry, something went wrong."
-        />
+      {links.length === 0 ? (
+        <Result title="Empty" subTitle="Try uploading files!" />
       ) : (
         <List
-          dataSource={list}
+          dataSource={links}
           itemLayout="horizontal"
-          renderItem={(item: { url: string }) => (
+          renderItem={(item) => (
             <List.Item>
-              <Text copyable type="secondary">
-                {item.url}
-              </Text>
+              <Link
+                href={`${window.location.origin}/files/${item}`}
+                target="_blank"
+                copyable={{
+                  text: `${window.location.origin}/files/${item}`
+                }}
+                type="secondary"
+              >
+                {item}
+              </Link>
             </List.Item>
           )}
         />
       )}
     </>
-  );
-};
+  )
+}
