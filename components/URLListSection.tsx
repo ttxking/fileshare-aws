@@ -1,24 +1,23 @@
-import { linksAtom } from '@/atoms/files'
-import { deleteLink } from '@/service/delete'
-import { DeleteOutlined } from '@ant-design/icons'
-import { List, Result, Typography } from 'antd'
-import { useAtom } from 'jotai'
+import { linksAtom } from "@/atoms/files";
+import { deleteLink } from "@/service/delete";
+import { DeleteOutlined, DownloadOutlined } from "@ant-design/icons";
+import { Button, List, Result, Space, Typography } from "antd";
+import { useAtom } from "jotai";
 
-const { Title, Link } = Typography
+const { Title, Link } = Typography;
 
 export const URLListSection = () => {
-  const [links, setLinks] = useAtom(linksAtom)
-  
+  const [links, setLinks] = useAtom(linksAtom);
+
   const onDeleteLink = async (fileId: string) => {
     try {
-  
       await deleteLink(fileId);
-     
-      setLinks((links) => links.filter(link => link !== fileId));
+
+      setLinks((links) => links.filter((link) => link !== fileId));
     } catch (error) {
-      console.error(error)
+      console.error(error);
     }
-  }
+  };
 
   return (
     <>
@@ -35,13 +34,15 @@ export const URLListSection = () => {
                 href={`${window.location.origin}/files/${item}`}
                 target="_blank"
                 copyable={{
-                  text: `${window.location.origin}/files/${item}`
+                  text: `${window.location.origin}/files/${item}`,
                 }}
                 type="secondary"
               >
                 {item}
               </Link>
-              <DeleteOutlined
+              <Button
+                icon={<DeleteOutlined />}
+                danger
                 onClick={() => onDeleteLink(item)}
               />
             </List.Item>
@@ -49,5 +50,5 @@ export const URLListSection = () => {
         />
       )}
     </>
-  )
-}
+  );
+};
