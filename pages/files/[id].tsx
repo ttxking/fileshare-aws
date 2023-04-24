@@ -77,10 +77,7 @@ export default function FileDetail() {
             <Title level={2}>{detail?.file_name}</Title>
             {!isLoading ? (
               <>
-                <Space>
-                  <Button href={detail?.presignedUrl}>View</Button>
-                  <Button onClick={() => downloadFile()}>Download</Button>
-                </Space>
+                <Button onClick={() => downloadFile()}>Download</Button>
               </>
             ) : null}
           </Space>
